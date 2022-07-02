@@ -1,0 +1,30 @@
+ninja_required_version = 1.3
+cxx = /cluster/spack/apps/linux-centos7-x86_64/gcc-4.8.5/gcc-6.3.0-sqhtfh32p5gerbkvi5hih7cfvcpmewvj/bin/g++
+nvcc = /cluster/project/sachan/tianyu/anaconda3/bin/nvcc
+
+cflags = -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /cluster/project/sachan/tianyu/anaconda3/envs/ar/include -fPIC -O2 -isystem /cluster/project/sachan/tianyu/anaconda3/envs/ar/include -fPIC -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include/TH -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include/THC -I/cluster/project/sachan/tianyu/anaconda3/include -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/include/python3.8 -c
+post_cflags = -w -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_genbmm -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+cuda_cflags = -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include/TH -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/lib/python3.8/site-packages/torch/include/THC -I/cluster/project/sachan/tianyu/anaconda3/include -I/cluster/project/sachan/tianyu/anaconda3/envs/ar/include/python3.8 -c
+cuda_post_cflags = -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -w -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_genbmm -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_75,code=compute_75 -gencode=arch=compute_75,code=sm_75 -ccbin /cluster/spack/apps/linux-centos7-x86_64/gcc-4.8.5/gcc-6.3.0-sqhtfh32p5gerbkvi5hih7cfvcpmewvj/bin/gcc -std=c++14
+ldflags = 
+
+rule compile
+  command = $cxx -MMD -MF $out.d $cflags -c $in -o $out $post_cflags
+  depfile = $out.d
+  deps = gcc
+
+rule cuda_compile
+  depfile = $out.d
+  deps = gcc
+  command = $nvcc  $cuda_cflags -c $in -o $out $cuda_post_cflags
+
+
+
+build /cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/banded_cuda_kernel.o: cuda_compile /cluster/project/sachan/tianyu/repos/genbmm/banded_cuda_kernel.cu
+build /cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda.o: compile /cluster/project/sachan/tianyu/repos/genbmm/matmul_cuda.cpp
+build /cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o: cuda_compile /cluster/project/sachan/tianyu/repos/genbmm/matmul_cuda_kernel.cu
+
+
+
+
+

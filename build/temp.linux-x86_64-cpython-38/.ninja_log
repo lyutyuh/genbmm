@@ -1,0 +1,10 @@
+# ninja log v5
+4	23205	1656714017198735000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda.o	65b2cb1a31ae2399
+2	55020	1656714049010706000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/banded_cuda_kernel.o	92e6e623cdfac1b9
+5	55219	1656714049214712000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
+554	45995	1656714250568678000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
+555	47150	1656714500674666000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
+571	48273	1656714639444691000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
+562	48277	1656715064929618000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
+549	46410	1656716140773557000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
+569	46187	1656754305788924000	/cluster/project/sachan/tianyu/repos/genbmm/build/temp.linux-x86_64-cpython-38/matmul_cuda_kernel.o	ebf54f16b86a217c
