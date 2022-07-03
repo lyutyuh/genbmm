@@ -18,8 +18,8 @@ class LogMatMulBack(torch.autograd.Function):
     @staticmethod
     def backward(ctx, grad_output):
         a, b, grad_out, part, maxes = ctx.saved_tensors
-        grad_a, grad_b, grad_grad = _genbmm.backbackward(a, b, grad_out.contiguous(),
-                                                         part, maxes, grad_output.contiguous(), 0)
+        grad_a, grad_b, grad_grad = _genbmm.backbackward(
+            a, b, grad_out.contiguous(), part, maxes, grad_output.contiguous(), 0)
 
         return grad_a, grad_b, grad_grad, None, None
 
@@ -37,7 +37,7 @@ class LogMatMul(torch.autograd.Function):
         grad_a = LogMatMulBack.apply(a, b, grad_output.contiguous(), out, maxes)
         grad_b = LogMatMulBack.apply(trans(b), trans(a),
                                      trans(grad_output), trans(out), trans(maxes))
-
+        
         return grad_a, trans(grad_b)
 
     # grad_a = LogMatMulBack.apply(a, b, grad_output, out, maxes)
@@ -47,22 +47,6 @@ class LogMatMul(torch.autograd.Function):
         # #                       grad_output.contiguous() / (out - maxes).exp())
 
         # return grad_a, grad_b
-
-        
-class LogMatMulSquare(torch.autograd.Function):
-    @staticmethod
-    def forward(ctx, a):
-        out, maxes = _genbmm.forward(a, a, 0)
-        ctx.save_for_backward(a, out, maxes)
-        return out
-
-    @staticmethod
-    def backward(ctx, grad_output):
-        a, out, maxes = ctx.saved_tensors
-        g1 = LogMatMulBack.apply(a, a, grad_output.contiguous(), out, maxes)
-        grad_a = g1 + trans(g1)
-
-        return grad_a
 
 
 class MaxMatMul(torch.autograd.Function):
@@ -106,15 +90,34 @@ class ProdMaxMatMul(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, grad_output):
+        
         a, b, switches = ctx.saved_tensors
         grad_a, grad_b = _genbmm.backward(
             a.float(), b.float(), grad_output.contiguous().float(), switches.float(), switches.float(), 3
         )
         return grad_a.to(a.dtype), grad_b.to(b.dtype)
 
+    
+class LogMatMulInside(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, a, diag):
+        out, maxes = _genbmm.forward_inside(a, diag)
+        ctx.save_for_backward(a, out)
+        ctx.diag = diag
+        return out
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        a, out = ctx.saved_tensors
+        diag = ctx.diag
+        
+        grad_a, = _genbmm.backward_inside(a, grad_output.contiguous(), out, diag)
+        return grad_a, None
+
 
 logbmm = LogMatMul.apply
-logbmmsq = LogMatMulSquare.apply
+logbmminside = LogMatMulInside.apply
+
 maxbmm = MaxMatMul.apply
 samplebmm = SampleMatMul.apply
 prodmaxbmm = ProdMaxMatMul.apply
