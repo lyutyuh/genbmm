@@ -1,7 +1,16 @@
 # genbmm - Extension for Efficient Inside Algorithm
 <img src="download.png">
 
-An extension for efficient Inside Algorithm based on the genbmm library. Computes the inside score on the diagonals iteratively.
+An extension for efficient Inside Algorithm based on the [genbmm](https://github.com/harvardnlp/genbmm) library. Computes the inside score on the diagonals iteratively.
+
+## Quickstart
+
+```python
+!pip install -qU git+https://github.com/lyutyuh/genbmm
+```
+
+
+## Usage
 
 ```python
 import genbmm
@@ -17,7 +26,7 @@ for i in range(sentence_length):
 
 ```
 -----------------------
-
+## Old Readme
 
 This library is a collection of missing matrix-multiply like operations for PyTorch. It was developed to provide operators needed for [PyTorch-Struct](https://github.com/harvardnlp/pytorch-struct). 
 
