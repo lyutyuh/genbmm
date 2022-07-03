@@ -209,43 +209,25 @@ __global__ void inside_cuda_backward_kernel(
       {
           // valid area
           scalar_t val = 0.0;
-          bool used = false;
           
           if (row + diag < a_size)
           { // horizontal use
-              used = true;
               int k = row + diag;
               val += exp(a[n][row][col] + a[n][col+1][k] - part[n][row][k]) * grad_output[n][row][k];
           }
           if (col - diag >= 0)
           { // vertical use
-              used = true;
               int k = col - diag;
               val += exp(a[n][k][row-1] + a[n][row][col] - part[n][k][col]) * grad_output[n][k][col];
           }
           
-          
-          grad_a[n][row][col] += val;
-          grad_a[n][row][col] += grad_output[n][row][col];
-          
-          /* 
-          if (used)
-          {
-              grad_a[n][row][col] = val;
-          }
-          else
-          {
-              grad_a[n][row][col] = grad_output[n][row][col];
-          }
-          */
+          grad_a[n][row][col] = val + grad_output[n][row][col];
           
       }
       else
       {
           grad_a[n][row][col] = 0;
       }
-      
-      
   }
   
 }
@@ -527,7 +509,6 @@ template <typename scalar_t>
 __global__ void inside_cuda_forward_kernel(
     const torch::PackedTensorAccessor32<scalar_t,3,torch::RestrictPtrTraits> a,
     torch::PackedTensorAccessor32<scalar_t,3,torch::RestrictPtrTraits> out,
-    torch::PackedTensorAccessor32<scalar_t,3,torch::RestrictPtrTraits> maxes,
     const int in_size,
     const int a_size,
     const int diag
@@ -542,22 +523,22 @@ __global__ void inside_cuda_forward_kernel(
       if((col - row) == diag)
       {
           scalar_t val = 0.0;
-          scalar_t m = -1e9;
+          scalar_t m = 0.0;
 
           for (int i = row; i < col; ++i) {
              scalar_t v = a[n][row][i] + a[n][i+1][col];
              if (v > m) {
+                 val *= exp(m - v);
                  m = v;
+                 val += 1;
+             }
+             else 
+             {
+                 val += exp(v - m);
              }
           }
 
-          for (int i = row; i < col; ++i) {
-             scalar_t v = a[n][row][i] + a[n][i+1][col];
-             val += exp(v - m);
-          }
-
           out[n][row][col] = log(val) + m;
-          maxes[n][row][col] = m;
       }
       else if((col - row) > diag)
       {
@@ -676,15 +657,13 @@ std::vector<torch::Tensor> inside_cuda_forward(
                     batch_size);
 
   // Dispatch
-  auto maxes = torch::zeros({batch_size, a_size, a_size}, options);
   AT_DISPATCH_FLOATING_TYPES_AND_HALF(a.type(), "inside_forward_cuda", ([&] {
               inside_cuda_forward_kernel<scalar_t><<<blocks, threads_per_block>>>(
                   a.packed_accessor32<scalar_t,3,torch::RestrictPtrTraits>(),
                   out.packed_accessor32<scalar_t,3,torch::RestrictPtrTraits>(),
-                  maxes.packed_accessor32<scalar_t,3,torch::RestrictPtrTraits>(),
                   in_size, a_size, diag);
           } ) );
-  return {out, maxes};
+  return {out};
 }
 
 
@@ -705,11 +684,6 @@ std::vector<torch::Tensor> inside_cuda_backward(
   const dim3 threads_per_block(threads, threads, 1);
   auto grad_a = torch::zeros_like(a);
 
-  /* auto grad_bp = grad_b.packed_accessor32<float,3,torch::RestrictPtrTraits>(); */
-  const int threads2 = 32;
-  const dim3 blocks2(in_size / threads2 + 1,
-                    a_size / threads2 + 1,
-                    batch_size);
 
   AT_DISPATCH_FLOATING_TYPES_AND_HALF(a.type(), "matmul_forward_cuda", ([&] {
               inside_cuda_backward_kernel<scalar_t><<<blocks, threads_per_block>>>(

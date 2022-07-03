@@ -101,7 +101,7 @@ class ProdMaxMatMul(torch.autograd.Function):
 class LogMatMulInside(torch.autograd.Function):
     @staticmethod
     def forward(ctx, a, diag):
-        out, maxes = _genbmm.forward_inside(a, diag)
+        out, = _genbmm.forward_inside(a, diag)
         ctx.save_for_backward(a, out)
         ctx.diag = diag
         return out
@@ -112,7 +112,7 @@ class LogMatMulInside(torch.autograd.Function):
         diag = ctx.diag
         
         grad_a, = _genbmm.backward_inside(a, grad_output.contiguous(), out, diag)
-        return grad_a, None
+        return grad_a.to(a.dtype), None
 
 
 logbmm = LogMatMul.apply
