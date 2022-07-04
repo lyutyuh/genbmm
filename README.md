@@ -1,5 +1,5 @@
-# genbmm - Extension for Efficient Inside Algorithm
-<img src="download.png">
+## genbmm 
+# - Extension for Efficient Inside Algorithm
 
 An extension for efficient Inside Algorithm based on the [genbmm](https://github.com/harvardnlp/genbmm) library. Computes the inside score on the diagonals iteratively.
 
