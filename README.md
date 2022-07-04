@@ -15,10 +15,10 @@ pip install git+https://github.com/lyutyuh/genbmm
 
 
 ```python
-genbmm.logbmminside(inside, i+1)
+genbmm.logbmminside(inside, width)
 ``` 
-computes the following values for all $\text{col} - \text{row} = i+1$:
-$$inside[\text{row}, \text{col}] = \log \sum_{i=\text{row}}^{\text{col}} \exp (inside[\text{row}, i] + inside[i+1, \text{col}]) $$
+computes the following values for all $\texttt{col} - \texttt{row} = \texttt{width}$:
+$$inside[\texttt{row}, \texttt{col}] = \log \sum_{i=\texttt{row}}^{\texttt{col}} \exp (inside[\texttt{row}, i] + inside[i+1, \texttt{col}]) $$
 
 ```python
 import genbmm
