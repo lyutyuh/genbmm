@@ -6,7 +6,7 @@ An extension for efficient Inside Algorithm based on the [genbmm](https://github
 ## Quickstart
 
 ```python
-pip install -qU git+https://github.com/lyutyuh/genbmm
+pip install git+https://github.com/lyutyuh/genbmm
 ```
 
 
@@ -39,7 +39,7 @@ The library has currently has two components. It only supports CUDA operations.
 ## Quickstart 
 
 ```python
-pip install -qU git+https://github.com/lyutyuh/genbmm
+pip install git+https://github.com/lyutyuh/genbmm
 ```
 ### Generalized Matrix Multiplication
 
