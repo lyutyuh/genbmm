@@ -1,7 +1,8 @@
 ## genbmm 
 # - Extension for Efficient Inside Algorithm
 
-An extension for efficient Inside Algorithm based on the [genbmm](https://github.com/harvardnlp/genbmm) library. Computes the inside score on the diagonals iteratively.
+An CUDA kernel extension for *efficient Inside Algorithm* built on the [genbmm](https://github.com/harvardnlp/genbmm) library. 
+It computes the inside score on the diagonals iteratively.
 
 ## Quickstart
 
@@ -12,6 +13,13 @@ pip install git+https://github.com/lyutyuh/genbmm
 
 ## Usage
 
+
+```python
+genbmm.logbmminside(inside, i+1)
+``` 
+computes the following values for all $\text{col} - \text{row} = i+1$:
+$$inside[\text{row}, \text{col}] = \log \sum_{i=\text{row}}^{\text{col}} \exp (inside[\text{row}, i] + inside[i+1, \text{col}]) $$
+
 ```python
 import genbmm
 
@@ -21,10 +29,14 @@ inside = torch.rand(batch_size, sentence_length, sentence_length).cuda().require
 
 for i in range(sentence_length):
     # computing inside score on inside.diagonal(sentence_length+1)
-    inside = genbmm.logbmminside(inside, sentence_length+1)
-    
-
+    inside = genbmm.logbmminside(inside, i+1)
 ```
+
+## Example
+The grammar in [structured span selector](https://github.com/lyutyuh/structured-span-selector).
+
+https://github.com/lyutyuh/structured-span-selector/blob/main/outside_mp.py#L62
+
 -----------------------
 ## Old Readme
 
