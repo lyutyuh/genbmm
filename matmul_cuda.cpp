@@ -13,6 +13,18 @@ std::vector<torch::Tensor> inside_cuda_backward(
     torch::Tensor part,
     int diag);
 
+std::vector<torch::Tensor> inside_rule_cuda_forward(
+    torch::Tensor a,
+    torch::Tensor rule,
+    int diag);
+
+std::vector<torch::Tensor> inside_rule_cuda_backward(
+    torch::Tensor a,
+    torch::Tensor rule,
+    torch::Tensor grad_output,
+    torch::Tensor part,
+    int diag);
+
 std::vector<torch::Tensor> matmul_cuda_forward(
     torch::Tensor a,
     torch::Tensor b,
@@ -199,6 +211,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("forward", &matmul_forward, "Log-Matmul forward (CUDA)");
   m.def("forward_inside", &inside_forward, "Log-Matmul-Inside forward (CUDA)");
   m.def("backward_inside", &inside_backward, "Log-Matmul-Inside backward (CUDA)");
+  m.def("forward_rule_inside", &inside_rule_cuda_forward, "Log-Matmul-Inside-Rule forward (CUDA)");
+  m.def("backward_rule_inside", &inside_rule_cuda_backward, "Log-Matmul-Inside-Rule backward (CUDA)");
   m.def("backward", &matmul_backward, "Log-Matmul backward (CUDA)");
   m.def("backbackward", &matmul_backbackward, "Log-Matmul backbackward (CUDA)");
   m.def("forward_band", &banded_forward, "Banded Log-Matmul forward (CUDA)");

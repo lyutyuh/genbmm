@@ -97,7 +97,7 @@ class ProdMaxMatMul(torch.autograd.Function):
         )
         return grad_a.to(a.dtype), grad_b.to(b.dtype)
 
-    
+
 class LogMatMulInside(torch.autograd.Function):
     @staticmethod
     def forward(ctx, a, diag):
@@ -113,11 +113,31 @@ class LogMatMulInside(torch.autograd.Function):
         
         grad_a, = _genbmm.backward_inside(a, grad_output.contiguous(), out, diag)
         return grad_a.to(a.dtype), None
+    
+    
+class LogMatMulInsideRule(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, a, rule, diag):
+        out, = _genbmm.forward_rule_inside(a, rule, diag)
+        ctx.save_for_backward(a, rule, out)
+        ctx.diag = diag
+        return out
 
+    @staticmethod
+    def backward(ctx, grad_output):
+        a, rule, out = ctx.saved_tensors
+        diag = ctx.diag
+        
+        grad_a, grad_rule = _genbmm.backward_rule_inside(a, rule, grad_output.contiguous(), out, diag)
+        return grad_a.to(a.dtype), grad_rule.to(a.dtype), None
+
+
+    
+logbmminside = LogMatMulInside.apply
+logbmminside_rule = LogMatMulInsideRule.apply
 
 logbmm = LogMatMul.apply
-logbmminside = LogMatMulInside.apply
-
 maxbmm = MaxMatMul.apply
 samplebmm = SampleMatMul.apply
 prodmaxbmm = ProdMaxMatMul.apply
+
