@@ -33,7 +33,8 @@ for i in range(sentence_length):
 ```
 
 ## Example
-An example Colab link: https://colab.research.google.com/drive/1-enuSiQ-TS4R1UsT9AmqrmbFx0PFevwC?usp=sharing.
+An example Colab link:
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-enuSiQ-TS4R1UsT9AmqrmbFx0PFevwC?usp=sharing).
 
 This kernel is used in [structured span selector](https://github.com/lyutyuh/structured-span-selector).
 
