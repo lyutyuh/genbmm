@@ -1,7 +1,7 @@
 ## genbmm 
-# - Extension for Efficient Inside Algorithm
+# An Extension for Efficient Inside Algorithm
 
-An CUDA kernel extension for *efficient Inside Algorithm* built on the [genbmm](https://github.com/harvardnlp/genbmm) library. 
+A CUDA kernel extension for *efficient Inside Algorithm* built on the [genbmm](https://github.com/harvardnlp/genbmm) library. 
 It computes the inside score on the diagonals iteratively.
 
 ## Quickstart
@@ -18,7 +18,7 @@ pip install git+https://github.com/lyutyuh/genbmm
 genbmm.logbmminside(inside, width)
 ``` 
 computes the following values for all $\texttt{col} - \texttt{row} = \texttt{width}$:
-$$inside[\texttt{row}, \texttt{col}] = \log \sum_{i=\texttt{row}}^{\texttt{col}} \exp (inside[\texttt{row}, i] + inside[i+1, \texttt{col}]) $$
+$$inside[\texttt{row}, \texttt{col}] = \log \sum_{i=\texttt{row}}^{\texttt{col}-1} \exp (inside[\texttt{row}, i] + inside[i+1, \texttt{col}]) $$
 
 ```python
 import genbmm
@@ -33,7 +33,9 @@ for i in range(sentence_length):
 ```
 
 ## Example
-The grammar in [structured span selector](https://github.com/lyutyuh/structured-span-selector).
+An example Colab link: https://colab.research.google.com/drive/1-enuSiQ-TS4R1UsT9AmqrmbFx0PFevwC?usp=sharing.
+
+This kernel is used in [structured span selector](https://github.com/lyutyuh/structured-span-selector).
 
 https://github.com/lyutyuh/structured-span-selector/blob/main/outside_mp.py#L62
 
