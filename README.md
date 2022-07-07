@@ -13,13 +13,22 @@ pip install git+https://github.com/lyutyuh/genbmm
 
 ## Usage
 
+1. 
+```python
+genbmm.logbmminside_rule(inside, rule, width)
+``` 
+computes the following values for all $\texttt{col} - \texttt{row} = \texttt{width}$:
+$$inside[\texttt{batch}, \texttt{row}, \texttt{col}] = rule[\texttt{batch}, \texttt{row}, \texttt{col}] + \log \sum_{i=\texttt{row}}^{\texttt{col}-1} \exp (inside[\texttt{batch}, \texttt{row}, i] + inside[\texttt{batch}, i+1, \texttt{col}]) $$
 
+2. 
 ```python
 genbmm.logbmminside(inside, width)
 ``` 
 computes the following values for all $\texttt{col} - \texttt{row} = \texttt{width}$:
-$$inside[\texttt{row}, \texttt{col}] = \log \sum_{i=\texttt{row}}^{\texttt{col}-1} \exp (inside[\texttt{row}, i] + inside[i+1, \texttt{col}]) $$
+$$inside[\texttt{batch}, \texttt{row}, \texttt{col}] = \log \sum_{i=\texttt{row}}^{\texttt{col}-1} \exp (inside[\texttt{batch}, \texttt{row}, i] + inside[\texttt{batch}, i+1, \texttt{col}]) $$
 
+
+<!-- 
 ```python
 import genbmm
 
@@ -28,9 +37,9 @@ sentence_length = 32
 inside = torch.rand(batch_size, sentence_length, sentence_length).cuda().requires_grad_(True)
 
 for i in range(sentence_length):
-    # computing inside score on inside.diagonal(sentence_length+1)
+   # computing inside score on inside.diagonal(sentence_length+1)
     inside = genbmm.logbmminside(inside, i+1)
-```
+``` -->
 
 ## Example
 An example Colab link:
